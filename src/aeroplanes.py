@@ -3,6 +3,8 @@ from api_adapter import APIAdapter
 
 
 class Aeroplane:
+    __slots__ = ('_callsign', '_country', '_velocity', '_altitude', '_on_ground')
+
     def __init__(
         self,
         callsign: str,
@@ -43,20 +45,6 @@ class Aeroplane:
         return self._on_ground
 
 
-    def __lt__(self, other):
-        """Метод сравнения меньше"""
-        return self.altitude < other.altitude
-
-
-    def __gt__(self, other):
-        """Метод сравнения Больше"""
-        return self.altitude > other.altitude
-
-
-    def __len__(self):
-        return len(f'Количество самолетов на земле {self.on_ground}')
-
-
     def cast_to_object_list(self):
         """Преобразование набора данных в список объектов"""
         if not aeroplanes:
@@ -77,12 +65,22 @@ class Aeroplane:
                     "velocity": velocity,
                     "on_ground": on_ground
                 })
-                # print(aircrafts)
             return aircrafts
         except (ValueError, IndexError, TypeError) as e:
             print(f"Ошибка при обработке самолёта: {e}")
 
-
+   # def __lt__(self, other):
+   #      """Метод сравнения меньше"""
+   #      return self.altitude < other.altitude
+   #
+   #
+   #  def __gt__(self, other):
+   #      """Метод сравнения Больше"""
+   #      return self.altitude > other.altitude
+   #
+   #
+   #  def __len__(self):
+   #      return len(f'Количество самолетов на земле {self.on_ground}')
 
 
 

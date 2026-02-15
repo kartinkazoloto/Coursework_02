@@ -43,14 +43,14 @@ def opensky_resp():
                         -0.0168, # longitude — долгота(°)
                         51.0888, # latitude — широта(°)
                         4267.2, # baro_altitude — барометрическая  высота(м)
-                        false, # on_ground — находится ли самолёт на земле
+                        False, # on_ground — находится ли самолёт на земле
                         189.7, # velocity — горизонтальная скорость(м / с)
                         129.39, # true_track — курс(градусы)
                         14.63, # vertical_rate — вертикальная  скорость(м / с)
                         null, # sensors — ID сенсоров(null=неизвестно)
                         4282.44, # geo_altitude — геометрическая высота(м)
                         "2061", # squawk — код ответчика(транспондера)
-                        false, # spi — специальный сигнал(emergency / priority)
+                        False, # spi — специальный сигнал(emergency / priority)
                         0 # position_source — источник  позиции
                     ],
                     ...

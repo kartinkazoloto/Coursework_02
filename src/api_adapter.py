@@ -1,4 +1,6 @@
-from requests import get
+from asyncio import exceptions
+
+import requests
 from abc import ABC, abstractmethod
 
 
@@ -15,11 +17,11 @@ class ApiService(ABC):
 class APIAdapter(ApiService):
 
     def __init__(self) -> None:
-        self.openstreetmap_url = 'https://nominatim.openstreetmap.org/search'
-        self.opensky_url = 'https://opensky-network.org/api/states/all?'
-        self.aeroplanes = None
+        self.__openstreetmap_url = 'https://nominatim.openstreetmap.org/search'
+        self.__opensky_url = 'https://opensky-network.org/api/states/all?'
+        self.__aeroplanes = None
 
-    def get_aeroplanes(self, country: str) -> None:
+    def __get_aeroplanes(self, country: str) -> None:
         #Headers с user-agent - обязательный параметр при запросе к nominatim.openstreetmap.
         headers_nominatim = {
             'User-Agent': 'test-app',
@@ -31,11 +33,14 @@ class APIAdapter(ApiService):
             'format': 'json',
             'limit': 1,
         }
-
-        response = get(url=self.openstreetmap_url, params=params_nominatim, headers=headers_nominatim)
-        print(response.status_code)
-        data = response.json()
-        print(data)
+        try:
+            response = requests.get(url=self.__openstreetmap_url, params=params_nominatim, headers=headers_nominatim)
+            response.raise_for_status()
+            data = response.json()
+        except requests.exceptions.ConnectionError:
+            print("Connection Error")
+        except requests.exceptions.HTTPError:
+            print("HTTP Error")
         #Пример ответа от nominatim.openstreetmap можно посмотреть в задании курсовой.
         geo_coordinates = data[0].get('boundingbox')
 
@@ -46,14 +51,26 @@ class APIAdapter(ApiService):
             'lomin': geo_coordinates[2],
             'lomax': geo_coordinates[3],
         }
+        try:
 
-        response = get(url=self.opensky_url, params=params)
-        print(response.status_code)
+            response = requests.get(url=self.__opensky_url, params=params)
+            # print(response.status_code)
+            response.raise_for_status()
+            #Пример ответа от opensky-network можно посмотреть в задании курсовой.
+            self.__aeroplanes = response.json()
+        except requests.exceptions.ConnectionError:
+            print("Connection Error")
+        except requests.exceptions.HTTPError:
+            print("HTTP Error")
+            # print(self.aeroplanes)
+        return self.__aeroplanes
 
-        #Пример ответа от opensky-network можно посмотреть в задании курсовой.
-        self.aeroplanes = response.json()
-        # print(self.aeroplanes)
-        return self.aeroplanes
+
+    @property
+    def get_aeroplanes(self) -> None:
+        return self.__get_aeroplanes
+
+
 
 if __name__ == '__main__':
 
