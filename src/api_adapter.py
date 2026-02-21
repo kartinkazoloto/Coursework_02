@@ -1,10 +1,10 @@
-from asyncio import exceptions
-
+from asyncio import exceptions, timeout
 import requests
 from abc import ABC, abstractmethod
 
 
 class ApiService(ABC):
+    """Абстрактный класс для работы с API"""
     @abstractmethod
     def __init__(self):
         pass
@@ -15,13 +15,13 @@ class ApiService(ABC):
 
 
 class APIAdapter(ApiService):
-
+    """Класс для работы с платформами"""
     def __init__(self) -> None:
         self.__openstreetmap_url = 'https://nominatim.openstreetmap.org/search'
         self.__opensky_url = 'https://opensky-network.org/api/states/all?'
         self.__aeroplanes = None
 
-    def __get_aeroplanes(self, country: str) -> None:
+    def __get_aero(self, country: str) -> None:
         #Headers с user-agent - обязательный параметр при запросе к nominatim.openstreetmap.
         headers_nominatim = {
             'User-Agent': 'test-app',
@@ -34,7 +34,12 @@ class APIAdapter(ApiService):
             'limit': 1,
         }
         try:
-            response = requests.get(url=self.__openstreetmap_url, params=params_nominatim, headers=headers_nominatim)
+            response = requests.get(
+                url=self.__openstreetmap_url,
+                params=params_nominatim,
+                headers=headers_nominatim,
+                timeout=5
+            )
             response.raise_for_status()
             data = response.json()
         except requests.exceptions.ConnectionError:
@@ -53,7 +58,7 @@ class APIAdapter(ApiService):
         }
         try:
 
-            response = requests.get(url=self.__opensky_url, params=params)
+            response = requests.get(url=self.__opensky_url, params=params, timeout=5)
             # print(response.status_code)
             response.raise_for_status()
             #Пример ответа от opensky-network можно посмотреть в задании курсовой.
@@ -67,16 +72,6 @@ class APIAdapter(ApiService):
 
 
     @property
-    def get_aeroplanes(self) -> None:
-        return self.__get_aeroplanes
-
-
-
-if __name__ == '__main__':
-
-    api = APIAdapter()
-    aeroplanes = api.get_aeroplanes('Canada')
-    print("     Hello              _________")
-    print(aeroplanes)
-
+    def get_aeroplanes(self) -> list:
+        return self.__get_aero
 
