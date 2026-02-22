@@ -52,10 +52,13 @@ if __name__ == "__main__":
     print(len(aeroplanes))
     aeroplane = Aeroplane("PGT694  ", "United States", 268.79, 10203.18, False)
     print(type(aeroplane))
+
     json_saver = JSONSaver()
-    print(aeroplane.callsign)
+    print(f'aeroplane.callsign {aeroplane.callsign}')
+
     json_saver.add_aeroplane(aeroplane)
     print(len(aeroplanes))
+
     json_saver.delete_aeroplane(aeroplane)
     print(len(aeroplanes))
 

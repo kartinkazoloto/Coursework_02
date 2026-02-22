@@ -1,7 +1,7 @@
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
-
+import os
 
 
 class DataFileHandler(ABC):
@@ -27,9 +27,42 @@ class DataFileHandler(ABC):
 
 class JSONSaver(DataFileHandler):
     """Создание JSON"""
-    def __init__(self, json_file=None, aeroplanes=[]):
-        self.__json_file = json_file
-        self.__aeroplanes = aeroplanes
+    save_dir = Path(__file__).parent.parent / "data"
+    filename = f"data.json"
+    path_file = save_dir / filename
+
+    def __init__(self, filename: str = "data.json"):
+        self.__filename = filename
+
+    @property
+    def filename(self) -> str:
+        """Геттер для имени файла."""
+        return self.__filename
+
+    def load(self):
+        if not os.path.exists(self.__filename):
+            return []
+
+        try:
+            with open(self.__filename, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, list):
+                return data
+            else:
+                return []
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Ошибка при чтении файла {self.__filename}: {e}")
+            return []
+
+
+    def save(self, data):
+        # save_dir = Path(__file__).parent.parent / "data"
+        # file_name = f"data.json"
+        # path_file = save_dir / file_name
+
+
+        with open(self.path_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
 
 
     def add_aeroplane(self, new_aeroplane):
@@ -41,13 +74,16 @@ class JSONSaver(DataFileHandler):
                     "velocity": new_aeroplane.velocity,
                     "on_ground": new_aeroplane.on_ground
                 })
+        print(f'new_aeroplane_dict {new_aeroplane_dict}')
+        current_dict = self.load()
         if not isinstance(new_aeroplane_dict, dict):
             raise TypeError
-
-        if any(plane.get("callsign") == new_aeroplane_dict.get("callsign") for plane in self.__aeroplanes):
+        print(f'current_dict {current_dict}')
+        if any(plane.get("callsign") == new_aeroplane_dict.get("callsign") for plane in current_dict):
             print(f"Самолёт с callsign '{new_aeroplane_dict.get('callsign')}' уже существует, пропускаем")
             return
-        self.__aeroplanes.append(new_aeroplane_dict)
+        current_dict.append(new_aeroplane_dict)
+        self.save(current_dict)
 
 
     def delete_aeroplane(self, aeroplane_to_del):
@@ -59,17 +95,21 @@ class JSONSaver(DataFileHandler):
             "velocity": aeroplane_to_del.velocity,
             "on_ground": aeroplane_to_del.on_ground
         })
-        if not isinstance(aeroplane_to_del_dict, dict):
-            raise TypeError
-        for i in self.__aeroplanes:
-            if i.get("callsign") == aeroplane_to_del_dict.get("callsign"):
-                del self
 
+        current_data = self.load()
+        initial_count = len(current_data)
 
-    def save(self):
-        save_dir = Path(__file__).parent.parent / "data"
-        file_name = f"data.json"
-        path_file = save_dir / file_name
-        with open(path_file, "w", encoding="utf-8") as f:
-            json.dump(self.__json_file, f, ensure_ascii=False, indent=2)
+        # Фильтруем данные — оставляем только те, у которых callsign не совпадает
+        filtered_data = [plane for plane in current_data
+                         if plane.get("callsign") != aeroplane_to_del_dict.get["callsign"]]
+
+        # Если количество не изменилось — запись не найдена
+        if len(filtered_data) == initial_count:
+            print(f"Самолёт с callsign '{aeroplane_to_del_dict.get["callsign"]}' не найден")
+            return False
+
+        # Сохраняем отфильтрованные данные
+        self.save(filtered_data)
+        print(f"Удален самолёт с callsign '{aeroplane_to_del_dict.get["callsign"]}'")
+        return True
 

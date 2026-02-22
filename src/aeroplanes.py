@@ -100,10 +100,11 @@ if __name__ == '__main__':
     aeroplanes = Aeroplane.cast_to_object_list(aeroplanes)
     print("     Hello      2        _________\n  \n  \n")
     print(aeroplanes)
-    aeroplane = Aeroplane("UAL1621", "United States", 268.79, 10203.18, False)
+    aeroplane = Aeroplane("UAL1620", "United States", 268.79, 10203.18, False)
     json_saver = JSONSaver()
     json_saver.add_aeroplane(aeroplane)
-    json_saver.delete_aeroplane(aeroplane)
+    # json_saver.add_aeroplane(aeroplane)
+    # json_saver.delete_aeroplane(aeroplane)
 
     # top_n = int(input("Введите количество самолетов для вывода в топ N: "))
     top_n = 5
