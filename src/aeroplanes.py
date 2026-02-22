@@ -44,16 +44,6 @@ class Aeroplane:
     def on_ground(self) -> bool:
         return self._on_ground
 
-    # @classmethod
-    # def new_aeroplane(cls, aeroplane_data: dict):
-    #     """ Метод для создания нового самолета"""
-    #     callsign = aeroplane_data["callsign"]
-    #     country = aeroplane_data["country"]
-    #     velocity = aeroplane_data["velocity"]
-    #     altitude = aeroplane_data["altitude"]
-    #     on_ground = aeroplane_data["on_ground"]
-    #     return cls(callsign, country, velocity, altitude, on_ground)
-
 
     def cast_to_object_list(self):
         """Преобразование набора данных в список объектов"""
@@ -79,44 +69,50 @@ class Aeroplane:
         except (ValueError, IndexError, TypeError) as e:
             print(f"Ошибка при обработке самолёта: {e}")
 
-   # def __lt__(self, other):
-   #      """Метод сравнения меньше"""
-   #      return self.altitude < other.altitude
-   #
-   #
-   #  def __gt__(self, other):
-   #      """Метод сравнения Больше"""
-   #      return self.altitude > other.altitude
+
+    def __le__(self, other) -> bool:
+        """Метод сравнения Меньше или равно: <"""
+        if not isinstance(other, Aeroplane):
+            return NotImplemented
+        return self.altitude <= other.altitude
+
+
+    def __ge__(self, other):
+        """Метод сравнения Больше или равно"""
+        if not isinstance(other, Aeroplane):
+            return NotImplemented
+        return self.altitude >= other.altitude
 
 
 
-if __name__ == '__main__':
-    api = APIAdapter()
-    # country = input("Введите название страны: ")
-    input_country = "turkey"
-    aeroplanes = api.get_aeroplanes(input_country)
-    print("     Hello              _________")
-    print(aeroplanes)
-    aeroplanes = Aeroplane.cast_to_object_list(aeroplanes)
-    print("     Hello      2        _________\n  \n  \n")
-    print(aeroplanes)
-    aeroplane = Aeroplane("UAL1620", "United States", 268.79, 10203.18, False)
-    json_saver = JSONSaver()
-    json_saver.add_aeroplane(aeroplane)
-    # json_saver.add_aeroplane(aeroplane)
-    # json_saver.delete_aeroplane(aeroplane)
-
-    # top_n = int(input("Введите количество самолетов для вывода в топ N: "))
-    top_n = 5
-    # filter_words = input("Введите названия стран для фильтрации по стране регистрации: ").split()
-    filter_words = "germany"
-    # altitude_range = input("Введите диапазон высот полета: ")  # Пример: 100000 - 150000
-    altitude_range = 100000 - 150000
-
-    # filtered_aeroplanes = filter_aeroplanes(aeroplanes, filter_words)
-    #
-    # ranged_aeroplanes = get_aeroplanes_by_altitude(filtered_aeroplanes, altitude_range)
-    #
-    # sorted_aeroplanes = sort_aeroplanes(ranged_aeroplanes)
-    # top_aeroplanes = get_top_aeroplanes(sorted_aeroplanes, top_n)
-    # print_aeroplanes(top_aeroplanes)
+# if __name__ == '__main__':
+#     api = APIAdapter()
+#     # country = input("Введите название страны: ")
+#     input_country = "turkey"
+#     aeroplanes = api.get_aeroplanes(input_country)
+#     print("     Hello              _________")
+#     print(aeroplanes)
+#     aeroplanes = Aeroplane.cast_to_object_list(aeroplanes)
+#     print("     Hello      2        _________\n  \n  \n")
+#     print(aeroplanes)
+#     aeroplane = Aeroplane("UAL1624", "United States", 268.79, 10203.18, False)
+#     aeroplane1 = Aeroplane("UAL1620", "United States", 268.79, 10203.18, False)
+#     json_saver = JSONSaver()
+#     json_saver.add_aeroplane(aeroplane)
+#     json_saver.add_aeroplane(aeroplane1)
+#     json_saver.delete_aeroplane(aeroplane1)
+#
+#     # top_n = int(input("Введите количество самолетов для вывода в топ N: "))
+#     top_n = 5
+#     # filter_words = input("Введите названия стран для фильтрации по стране регистрации: ").split()
+#     filter_words = "germany"
+#     # altitude_range = input("Введите диапазон высот полета: ")  # Пример: 100000 - 150000
+#     altitude_range = 100000 - 150000
+#
+#     # filtered_aeroplanes = filter_aeroplanes(aeroplanes, filter_words)
+#     #
+#     # ranged_aeroplanes = get_aeroplanes_by_altitude(filtered_aeroplanes, altitude_range)
+#     #
+#     # sorted_aeroplanes = sort_aeroplanes(ranged_aeroplanes)
+#     # top_aeroplanes = get_top_aeroplanes(sorted_aeroplanes, top_n)
+#     # print_aeroplanes(top_aeroplanes)

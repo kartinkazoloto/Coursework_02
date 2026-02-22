@@ -31,7 +31,7 @@ class JSONSaver(DataFileHandler):
     filename = f"data.json"
     path_file = save_dir / filename
 
-    def __init__(self, filename: str = "data.json"):
+    def __init__(self, filename: str = filename):
         self.__filename = filename
 
     @property
@@ -56,17 +56,17 @@ class JSONSaver(DataFileHandler):
 
 
     def save(self, data):
-        # save_dir = Path(__file__).parent.parent / "data"
-        # file_name = f"data.json"
-        # path_file = save_dir / file_name
 
-
-        with open(self.path_file, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+        try:
+            with open(self.path_file, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            print(f"Данные успешно сохранены в {self.__filename}")
+        except IOError as e:
+            print(f"Ошибка при записи в файл {self.__filename}: {e}")
 
 
     def add_aeroplane(self, new_aeroplane):
-        """Добавление информации"""
+        """Добавление информации о самолете(ах) в файл"""
         new_aeroplane_dict = ({
                     "callsign" : new_aeroplane.callsign,
                     "country" : new_aeroplane.country,
@@ -74,11 +74,9 @@ class JSONSaver(DataFileHandler):
                     "velocity": new_aeroplane.velocity,
                     "on_ground": new_aeroplane.on_ground
                 })
-        print(f'new_aeroplane_dict {new_aeroplane_dict}')
         current_dict = self.load()
         if not isinstance(new_aeroplane_dict, dict):
             raise TypeError
-        print(f'current_dict {current_dict}')
         if any(plane.get("callsign") == new_aeroplane_dict.get("callsign") for plane in current_dict):
             print(f"Самолёт с callsign '{new_aeroplane_dict.get('callsign')}' уже существует, пропускаем")
             return
@@ -101,15 +99,14 @@ class JSONSaver(DataFileHandler):
 
         # Фильтруем данные — оставляем только те, у которых callsign не совпадает
         filtered_data = [plane for plane in current_data
-                         if plane.get("callsign") != aeroplane_to_del_dict.get["callsign"]]
+                         if plane.get("callsign") != aeroplane_to_del_dict.get("callsign")]
 
         # Если количество не изменилось — запись не найдена
         if len(filtered_data) == initial_count:
-            print(f"Самолёт с callsign '{aeroplane_to_del_dict.get["callsign"]}' не найден")
+            print(f"Самолёт с callsign '{aeroplane_to_del_dict.get('callsign')}' не найден")
             return False
 
         # Сохраняем отфильтрованные данные
         self.save(filtered_data)
-        print(f"Удален самолёт с callsign '{aeroplane_to_del_dict.get["callsign"]}'")
+        print(f"Удален самолёт с callsign '{aeroplane_to_del_dict.get('callsign')}'")
         return True
-

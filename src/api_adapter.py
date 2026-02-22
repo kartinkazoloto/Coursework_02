@@ -1,4 +1,3 @@
-from asyncio import exceptions, timeout
 import requests
 from abc import ABC, abstractmethod
 
@@ -46,7 +45,7 @@ class APIAdapter(ApiService):
             print("Connection Error")
         except requests.exceptions.HTTPError:
             print("HTTP Error")
-        #Пример ответа от nominatim.openstreetmap можно посмотреть в задании курсовой.
+
         geo_coordinates = data[0].get('boundingbox')
 
         #Параметры для фильтрации самолетов по их географическим координатам.
@@ -59,9 +58,8 @@ class APIAdapter(ApiService):
         try:
 
             response = requests.get(url=self.__opensky_url, params=params, timeout=5)
-            # print(response.status_code)
             response.raise_for_status()
-            #Пример ответа от opensky-network можно посмотреть в задании курсовой.
+
             self.__aeroplanes = response.json()
         except requests.exceptions.ConnectionError:
             print("Connection Error")
