@@ -12,7 +12,7 @@ from src.sort_aeroplanes import (
 
 
 # Функция для взаимодействия с пользователем
-def user_interaction():
+def user_interaction() -> None:
     while True:
         country = str(input("Введите название страны: "))
         is_valid = validate_country(country)

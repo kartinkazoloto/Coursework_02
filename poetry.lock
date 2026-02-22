@@ -215,6 +215,21 @@ files = [
 markers = {dev = "sys_platform == \"win32\"", lint = "platform_system == \"Windows\""}
 
 [[package]]
+name = "cov"
+version = "0.1.2"
+description = "A placeholder Python SDK package for BSO"
+optional = false
+python-versions = ">=3.8"
+groups = ["dev"]
+files = [
+    {file = "cov-0.1.2-py3-none-any.whl", hash = "sha256:570c38ce10ffa9c86fd417dc45e53679eada53d5318858188ea4ea6fe056484b"},
+    {file = "cov-0.1.2.tar.gz", hash = "sha256:652f880b292f3f2256f2290903d2224269ea6743d7a36f0a70cead39b1d433cd"},
+]
+
+[package.extras]
+dev = ["black (>=23.0.0)", "mypy (>=1.0.0)", "pytest (>=7.0.0)", "pytest-cov (>=4.0.0)", "ruff (>=0.1.0)"]
+
+[[package]]
 name = "coverage"
 version = "7.13.4"
 description = "Code coverage measurement for Python"

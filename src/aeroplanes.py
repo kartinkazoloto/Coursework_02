@@ -1,4 +1,3 @@
-
 class Aeroplane:
     __slots__ = ("_callsign", "_country", "_velocity", "_altitude", "_on_ground")
 
@@ -29,12 +28,13 @@ class Aeroplane:
     def on_ground(self) -> bool:
         return self._on_ground
 
-    def cast_to_object_list(self):
+    @staticmethod
+    def cast_to_object_list(data: dict) -> list:
         """Преобразование набора данных в список объектов"""
-        if not self:
+        if not data:
             raise ValueError("получен пустой список")
-        states_aeroplanes = self.get("states", [])
-        aircrafts = []
+        states_aeroplanes = data.get("states", [])
+        aircrafts: list = []
         try:
             for state in states_aeroplanes:
                 callsign = state[1]
@@ -55,14 +55,14 @@ class Aeroplane:
         except (ValueError, IndexError, TypeError) as e:
             print(f"Ошибка при обработке самолёта: {e}")
 
-    def __le__(self, other) -> bool:
-        """Метод сравнения Меньше или равно: <"""
+    def __lt__(self, other) -> bool:
+        """Метод сравнения Меньше"""
         if not isinstance(other, Aeroplane):
             return NotImplemented
-        return self.altitude <= other.altitude
+        return self.altitude < other.altitude
 
-    def __ge__(self, other):
-        """Метод сравнения Больше или равно"""
+    def __gt__(self, other) -> bool:
+        """Метод сравнения Больше"""
         if not isinstance(other, Aeroplane):
             return NotImplemented
-        return self.altitude >= other.altitude
+        return self.altitude > other.altitude
