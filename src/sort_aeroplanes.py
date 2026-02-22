@@ -1,12 +1,14 @@
 from tabulate import tabulate
 
+from src.country import validate_country
 
 
 def filter_aeroplanes(aeroplanes, filter_words):
     """Фильтрация списка по ключевым словам"""
-    filter_words_lower = set(country.strip().lower()
-                        for country in filter_words.split(','))
-
+    filter_words_lower = set(country.strip().lower() for country in filter_words.split(","))
+    for country in filter_words_lower:
+        if validate_country(country):
+            continue
     filtered_dict = []
 
     for plane in aeroplanes:
@@ -17,8 +19,10 @@ def filter_aeroplanes(aeroplanes, filter_words):
 
 def get_aeroplanes_by_altitude(aeroplanes, altitude_range):
     """Фильтрация списка по диапазону высот"""
-    min_alt, max_alt = map(int, [x.strip() for x in altitude_range.split('-')])
     ranged_aeroplanes = []
+    min_alt, max_alt = map(int, [x.strip() for x in altitude_range.split("-")])
+    if min_alt > max_alt:
+        max_alt, min_alt = map(int, [x.strip() for x in altitude_range.split("-")])
     for plane in aeroplanes:
         if plane["altitude"] is None:
             continue

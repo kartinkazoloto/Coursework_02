@@ -1,7 +1,7 @@
 import json
+import os
 from abc import ABC, abstractmethod
 from pathlib import Path
-import os
 
 
 class DataFileHandler(ABC):
@@ -12,12 +12,10 @@ class DataFileHandler(ABC):
         """Добавление инфо о самолете(ах) в файл"""
         pass
 
-
     @abstractmethod
     def delete_aeroplane(self, **params):
         """Удаление инфо о самолете(ах) из файла"""
         pass
-
 
     @abstractmethod
     def save(self, **params):
@@ -27,8 +25,10 @@ class DataFileHandler(ABC):
 
 class JSONSaver(DataFileHandler):
     """Создание JSON"""
+
     save_dir = Path(__file__).parent.parent / "data"
-    filename = f"data.json"
+    save_dir.mkdir(parents=True, exist_ok=True)
+    filename = "data.json"
     path_file = save_dir / filename
 
     def __init__(self, filename: str = filename):
@@ -54,7 +54,6 @@ class JSONSaver(DataFileHandler):
             print(f"Ошибка при чтении файла {self.__filename}: {e}")
             return []
 
-
     def save(self, data):
 
         try:
@@ -64,16 +63,15 @@ class JSONSaver(DataFileHandler):
         except IOError as e:
             print(f"Ошибка при записи в файл {self.__filename}: {e}")
 
-
     def add_aeroplane(self, new_aeroplane):
         """Добавление информации о самолете(ах) в файл"""
-        new_aeroplane_dict = ({
-                    "callsign" : new_aeroplane.callsign,
-                    "country" : new_aeroplane.country,
-                    "altitude": new_aeroplane.altitude,
-                    "velocity": new_aeroplane.velocity,
-                    "on_ground": new_aeroplane.on_ground
-                })
+        new_aeroplane_dict = {
+            "callsign": new_aeroplane.callsign,
+            "country": new_aeroplane.country,
+            "altitude": new_aeroplane.altitude,
+            "velocity": new_aeroplane.velocity,
+            "on_ground": new_aeroplane.on_ground,
+        }
         current_dict = self.load()
         if not isinstance(new_aeroplane_dict, dict):
             raise TypeError
@@ -83,23 +81,23 @@ class JSONSaver(DataFileHandler):
         current_dict.append(new_aeroplane_dict)
         self.save(current_dict)
 
-
     def delete_aeroplane(self, aeroplane_to_del):
         """Удаление инфо о самолете(ах) из файла"""
-        aeroplane_to_del_dict = ({
+        aeroplane_to_del_dict = {
             "callsign": aeroplane_to_del.callsign,
             "country": aeroplane_to_del.country,
             "altitude": aeroplane_to_del.altitude,
             "velocity": aeroplane_to_del.velocity,
-            "on_ground": aeroplane_to_del.on_ground
-        })
+            "on_ground": aeroplane_to_del.on_ground,
+        }
 
         current_data = self.load()
         initial_count = len(current_data)
 
         # Фильтруем данные — оставляем только те, у которых callsign не совпадает
-        filtered_data = [plane for plane in current_data
-                         if plane.get("callsign") != aeroplane_to_del_dict.get("callsign")]
+        filtered_data = [
+            plane for plane in current_data if plane.get("callsign") != aeroplane_to_del_dict.get("callsign")
+        ]
 
         # Если количество не изменилось — запись не найдена
         if len(filtered_data) == initial_count:
